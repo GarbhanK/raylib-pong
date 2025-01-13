@@ -1,6 +1,6 @@
 [
   {
-    "directory": "raylib-pong",
+    "directory": "/Users/garbhan/Code/raylib-pong",
     "command": "clang -Ilib/ -Llib/ -framework CoreVideo -framework IOKit -framework Cocoa -framework GLUT -framework OpenGL lib/libraylib.a -o bin/raylib-pong",
     "file": "src/main.c"
   }
