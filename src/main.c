@@ -141,7 +141,8 @@ int main ()
 
             if (GAMESTATE == START) {
                 // draw title
-                DrawText("PONG!", 300, 50, 50, BLACK);
+                int titleLen = MeasureText("PONG!", 50);
+                DrawText("PONG!", (int)(CENTER.x) - (titleLen/2), 50, 50, BLACK);
 
                 // draw controls instructions
                 const char* p1Controls = "Player 1: press W or S to move the paddle";
@@ -151,9 +152,9 @@ int main ()
                 int p2ControlsLen = MeasureText(p2Controls, 10);
                 int startMsgLen = MeasureText(startMsg, 10);
 
-                DrawText(p1Controls, CENTER.x - (p1ControlsLen/2), 110, 10, BLACK);
-                DrawText(p2Controls, CENTER.x - (p2ControlsLen/2), 130, 10, BLACK);
-                DrawText(startMsg, CENTER.x - (startMsgLen/2), 150, 10, BLACK);
+                DrawText(p1Controls, (int)CENTER.x - (p1ControlsLen/2), 110, 10, BLACK);
+                DrawText(p2Controls, (int)CENTER.x - (p2ControlsLen/2), 130, 10, BLACK);
+                DrawText(startMsg, (int)CENTER.x - (startMsgLen/2), 150, 10, BLACK);
 
                 // TODO: have black start screen, when start game shrink it to ball
                 // TODO: add custom colorschemes/themes/courts
@@ -163,7 +164,7 @@ int main ()
                 int scorecardLen = MeasureText("P1: 0     P2: 0", 20);
                 DrawText(
                         TextFormat("P1: %i     P2: %i", P1.score, P2.score),
-                        (CENTER.x) - (scorecardLen/2), 10, 20, BLACK
+                        (int)(CENTER.x) - (scorecardLen/2), 10, 20, BLACK
                 );
 
                 DrawLine(CENTER.x, 0, CENTER.x, HEIGHT, BLACK);
@@ -172,7 +173,7 @@ int main ()
 
             if (GAMESTATE == PAUSE) {
                 int pauseLen = MeasureText("PAUSE", 50);
-                DrawText("PAUSE", (CENTER.x)-(pauseLen/2), CENTER.y, 50, BLACK);
+                DrawText("PAUSE", ((int)CENTER.x)-(pauseLen/2), CENTER.y, 50, BLACK);
             }
 
             if (GAMESTATE == WIN) {
@@ -182,13 +183,14 @@ int main ()
 
                 const char *winMsg = TextFormat("Player %d wins!", winner);
                 int winLen = MeasureText(winMsg, 50);
-                DrawText(winMsg, (CENTER.x)-(winLen/2), CENTER.y, 50, BLACK);
+                DrawText(winMsg, ((int)CENTER.x)-(winLen/2), CENTER.y, 50, BLACK);
             }
 
             if (DEBUG) {
                 DrawText(TextFormat("fps: %i", GetFPS()), 200, 10, 10, BLACK);
                 DrawText(TextFormat("gamestate: %i", GAMESTATE), 200, 20, 10, BLACK);
                 DrawText(TextFormat("ball speed: %0.2f", B.speed), 200, 30, 10, BLACK);
+                DrawLine(CENTER.x, 0, CENTER.x, HEIGHT, BLACK);
             }
 
 			// draw objects
@@ -311,6 +313,10 @@ void HandleGamestate(Ball *b, Paddle *p1, Paddle *p2)
         if (GAMESTATE == START) { GAMESTATE = PLAY; } else { GAMESTATE = START; }
         ResetPaddle(p1, p2);
         ResetBall(b);
+
+        // reset scores
+        p1->score = 0;
+        p2->score = 0;
     }
 
     if (IsKeyPressed(KEY_SPACE))
