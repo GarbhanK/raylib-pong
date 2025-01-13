@@ -216,8 +216,12 @@ int main ()
 void UpdateBall(Ball *b, float delta)
 {
     if (GAMESTATE == PLAY) {
-        b->pos.x = b->pos.x + b->angle.x * (delta * b->speed);
-        b->pos.y = b->pos.y + b->angle.y * (delta * b->speed);
+        Vector2 currentPos = b->pos;
+        Vector2 targetPos = {
+            currentPos.x + b->angle.x * (delta * b->speed),
+            currentPos.y + b->angle.y * (delta * b->speed)
+        };
+        b->pos = Vector2Lerp(currentPos, targetPos, 1.0);
     }
 }
 
