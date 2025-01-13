@@ -1,5 +1,5 @@
-
 #include "raylib.h"
+#include "raymath.h"
 
 #define PADDLE_SPEED 400.0f
 #define MAX_BALL_SPEED 5.0f
@@ -85,7 +85,7 @@ int main ()
 		UpdatePaddle(&P1, dt);
 		UpdatePaddle(&P2, dt);
         UpdateBall(&B, dt);
-		
+
         // scoring logic
         if (B.pos.x <= 0) {
             ResetBall(&B);
@@ -114,10 +114,10 @@ int main ()
         }
 
         // P1 paddle bounce
-        if ( 
-                (B.pos.x <= P1.area.width + B.radius) && 
-                (B.pos.y > P1.area.y) && 
-                (B.pos.y <= P1.area.y + P1.area.height) 
+        if (
+                (B.pos.x <= P1.area.width + B.radius) &&
+                (B.pos.y > P1.area.y) &&
+                (B.pos.y <= P1.area.y + P1.area.height)
             )
         {
             BounceBall(&B, -1, 1);
@@ -125,7 +125,7 @@ int main ()
         }
 
         // P2 paddle bounce
-        if ( 
+        if (
                 (B.pos.x >= WIDTH - P2.area.width - B.radius) &&
                 (B.pos.y >= P2.area.y) &&
                 (B.pos.y <= P2.area.y + P2.area.height)
@@ -165,7 +165,7 @@ int main ()
                         TextFormat("P1: %i     P2: %i", P1.score, P2.score),
                         (CENTER.x) - (scorecardLen/2), 10, 20, BLACK
                 );
-                
+
                 DrawLine(CENTER.x, 0, CENTER.x, HEIGHT, BLACK);
                 // TODO: other pong graphical bits, like a videoball type court
             }
@@ -249,27 +249,34 @@ void ResetPaddle(Paddle *p1, Paddle *p2)
 
 void UpdatePaddle(Paddle *paddle, float delta)
 {
+    float currentPos = paddle->area.y;
+    float targetPos = currentPos;
+
 	// paddle input
 	if ( (paddle->player == RIGHT) && (GAMESTATE == PLAY) ) {
         // handle upper/lower boundaries
         if ( IsKeyDown(KEY_UP) && (paddle->area.y >= 0) )
         {
-            paddle->area.y -= PADDLE_SPEED*delta;
+            targetPos -= PADDLE_SPEED*delta;
+            paddle->area.y = Lerp(currentPos, targetPos, 1.0);
         }
-	    if ( IsKeyDown(KEY_DOWN) && (paddle->area.y + paddle->area.height <= HEIGHT) ) 
+	    if ( IsKeyDown(KEY_DOWN) && (paddle->area.y + paddle->area.height <= HEIGHT) )
         {
-            paddle->area.y += PADDLE_SPEED*delta;
+            targetPos += PADDLE_SPEED*delta;
+            paddle->area.y = Lerp(currentPos, targetPos, 1.0);
         }
 	}
 
 	if ( (paddle->player == LEFT) && (GAMESTATE == PLAY) ) {
 		if (IsKeyDown(KEY_W) && (paddle->area.y >= 0) )
         {
-            paddle->area.y -= PADDLE_SPEED*delta;
+            targetPos -= PADDLE_SPEED*delta;
+            paddle->area.y = Lerp(currentPos, targetPos, 1.0);
         }
 	    if (IsKeyDown(KEY_S) && (paddle->area.y + paddle->area.height <= HEIGHT))
         {
-            paddle->area.y += PADDLE_SPEED*delta;
+            targetPos += PADDLE_SPEED*delta;
+            paddle->area.y = Lerp(currentPos, targetPos, 1.0);
         }
 	}
 
@@ -285,7 +292,7 @@ Vector2 RandomAngle()
     } else {
         angles.x = -100.0f;
     };
-    
+
     // dy, random value between -50 and 50
     angles.y = (float)GetRandomValue(-50, 50);
 
@@ -311,4 +318,3 @@ void HandleGamestate(Ball *b, Paddle *p1, Paddle *p2)
         if (GAMESTATE == PLAY) { GAMESTATE = PAUSE; } else { GAMESTATE = PLAY; }
     }
 }
-
